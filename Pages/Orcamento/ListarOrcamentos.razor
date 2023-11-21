@@ -1,0 +1,55 @@
+@inject IOrcamentoService OrcamentoService
+@inject NavigationManager NavigationManager
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Cliente</th>
+            <th>Carro</th>
+            <th>Placa</th>
+            <th>Chassi</th>
+            <th>Aberto</th>
+            <th>Ult Atualização</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var orcamento in OrcamentoService.Orcamentos)
+        {
+            <tr>
+                <td>@orcamento.Cliente</td>
+                <td>@orcamento.Carro</td>
+                <td>@orcamento.Placa</td>
+                <td>@orcamento.Chassi</td>
+                <td>@orcamento.DataCriacao</td>
+                <td>@orcamento.DateAtualizacao</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="(() => ShowProduct(orcamento.Id))">
+                        <i class="bi bi-pencil-square"></i>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+
+@code {
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await OrcamentoService.GetOrcamentos();
+    }
+
+
+    void ShowProduct(int id)
+    {
+        NavigationManager.NavigateTo($"orcamento/{id}");
+    }
+
+}

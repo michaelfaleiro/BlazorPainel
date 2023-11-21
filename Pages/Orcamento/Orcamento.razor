@@ -1,0 +1,107 @@
+@page "/orcamento"
+@page "/orcamento/{id:int}"
+@inject IOrcamentoService OrcamentoService
+@inject NavigationManager NavigationManager
+
+
+@if (Id is null)
+{
+    <PageTitle>Novo Orçamento</PageTitle>
+    <h3>Novo Orçamento</h3>
+}
+else
+{
+    <PageTitle>Editar @orcamento!.Cliente</PageTitle>
+    <h3>Editar Orcamento</h3>
+}
+
+<EditForm Model="orcamento" OnValidSubmit="HandleSubmit">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label class="form-label" for="Cliente">Nome:</label>
+        <InputText class="form-control" id="Cliente" @bind-Value="orcamento!.Cliente" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="Carro">Carro:</label>
+        <InputText class="form-control" id="Carro" @bind-Value="orcamento.Carro" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="Placa">Placa:</label>
+        <InputText class="form-control" id="Placa" @bind-Value="orcamento.Placa" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="Chassi">Chassi:</label>
+        <InputText class="form-control" id="Chassi" @bind-Value="orcamento.Chassi" />
+    </div>
+
+    <div class="d-flex gap-3">
+        <button type="submit" class="btn btn-primary">@btnText</button>
+        <button type="button" class="btn btn-secondary" @onclick="btnCancelar">Voltar</button>
+    </div>
+</EditForm>
+
+
+
+
+
+
+
+@code {
+
+    [Parameter]
+    public int? Id { get; set; }
+
+    string btnText = string.Empty;
+
+    BlazorPainel.Entidades.Orcamento? orcamento = new();
+
+    protected override void OnInitialized()
+    {
+        btnText = Id == null ? "Salvar" : "Atualizar";
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id is not null)
+        {
+            var result = await OrcamentoService.GetOrcamentoById((int)Id);
+            if (result is not null)
+                orcamento = result;
+            else
+                NavigationManager.NavigateTo("orcamentos");
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+
+        if (Id is null)
+        {
+            await OrcamentoService.CreateOrcamento(orcamento!);
+
+        }
+        else
+        {
+            await OrcamentoService.UpdateOrcamento((int)Id, orcamento!);
+
+        }
+    }
+
+    void btnCancelar()
+    {
+        NavigationManager.NavigateTo("orcamentos");
+    }
+
+
+
+
+
+
+}
